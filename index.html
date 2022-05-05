@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>Build a puzzle in VR - Play now in your browser for free</title>
+    <style>
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            background: #151515;
+            color: #c3c3c3;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        #grid {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: repeat(5, 1fr);
+            grid-column-gap: 20px;
+            grid-row-gap: 20px;
+            height: 100vh;
+        }
+
+        #grid>div.image {
+            grid-area: 2 / 1 / 5 / 3;
+            text-align: center;
+        }
+
+        #grid>div.image>img {
+            height: 100%;
+            background-color: rgb(39, 39, 39);
+            border-radius: 20px;
+        }
+
+        #grid>div.details {
+            grid-area: 2 / 3 / 5 / 6;
+        }
+
+        #grid>div.prev {
+            grid-area: 1 / 1 / 2 / 3;
+            text-align: center;
+            /* padding: 30px; */
+            opacity: 0.5;
+            cursor: pointer;
+            transition: opacity 0.1s ease-in;
+        }
+
+        #grid>div.next {
+            grid-area: 5 / 1 / 6 / 3;
+            text-align: center;
+            /* padding: 30px; */
+            opacity: 0.5;
+            cursor: pointer;
+            transition: opacity ease-in 0.1s;
+        }
+
+        #grid>div.header {
+            grid-area: 1 / 3 / 2 / 6;
+            text-align: right;
+            margin-right: 10%;
+        }
+
+        #grid>div.footer {
+            grid-area: 5 / 3 / 6 / 6;
+        }
+
+
+        #grid>div.prev:hover {
+            opacity: 1;
+        }
+
+        #grid>div.next:hover {
+            opacity: 1;
+        }
+
+
+        .arrow {
+            border: solid rgb(255, 255, 255);
+            border-width: 0 8px 8px 0;
+            display: inline-block;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        .right {
+            transform: rotate(-45deg);
+            -webkit-transform: rotate(-45deg);
+        }
+
+        .left {
+            transform: rotate(135deg);
+            -webkit-transform: rotate(135deg);
+        }
+
+        .up {
+            transform: translateY(10vh) rotate(-135deg);
+            -webkit-transform: translateY(10vh) rotate(-135deg);
+        }
+
+        .down {
+            transform: rotate(45deg);
+            -webkit-transform: rotate(45deg);
+        }
+
+
+        button.play {
+            border: 5px solid #fff;
+            border-radius: 20px;
+            background: rgba(0, 0, 0, 0.1);
+            color: #fff;
+            font: bold 26px sans-serif;
+            text-align: center;
+            opacity: 0.7;
+            outline: none;
+            transition: opacity 0.1s ease-in;
+            width: 90%;
+            height: 30%;
+            cursor: pointer;
+        }
+
+        button.play:hover {
+            opacity: 1;
+        }
+
+        div.settings {
+            width: 90%;
+            height: 50%;
+            opacity: 0.7;
+            transition: opacity 0.1s ease-in;
+        }
+
+        div.settings:hover {
+            opacity: 1;
+        }
+
+
+        /* slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            margin: 10px 0;
+            width: 100%;
+        }
+
+        input[type=range]:focus {
+            outline: none;
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 10px;
+            box-shadow: 1px 1px 1px #000000;
+            background: #545454;
+            border: 1px solid #000000;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            box-shadow: 2px 2px 1px #636363;
+            border: 1px solid #c3c3c3;
+            height: 50px;
+            width: 50px;
+            border-radius: 20px;
+            background: #FFFFFF;
+            cursor: pointer;
+            -webkit-appearance: none;
+            margin-top: -21px;
+        }
+
+        input[type=range]:focus::-webkit-slider-runnable-track {
+            background: #545454;
+        }
+
+        input[type=range]::-moz-range-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            box-shadow: 1px 1px 1px #000000;
+            background: #545454;
+            border: 1px solid #000000;
+        }
+
+        input[type=range]::-moz-range-thumb {
+            box-shadow: 2px 2px 1px #636363;
+            border: 1px solid #c3c3c3;
+            height: 50px;
+            width: 50px;
+            border-radius: 20px;
+            background: #ffffff00;
+            cursor: pointer;
+        }
+
+        input[type=range]::-ms-track {
+            width: 100%;
+            height: 10px;
+            cursor: pointer;
+            background: transparent;
+            border-color: transparent;
+            color: transparent;
+        }
+
+        input[type=range]::-ms-fill-lower {
+            background: #545454;
+            border: 1px solid #000000;
+            border-radius: 94px;
+            box-shadow: 1px 1px 1px #000000;
+        }
+
+        input[type=range]::-ms-fill-upper {
+            background: #545454;
+            border: 1px solid #000000;
+            border-radius: 94px;
+            box-shadow: 1px 1px 1px #000000;
+        }
+
+        input[type=range]::-ms-thumb {
+            box-shadow: 2px 2px 1px #636363;
+            border: 1px solid #c3c3c3;
+            height: 50px;
+            width: 50px;
+            border-radius: 20px;
+            background: #FFFFFF;
+            cursor: pointer;
+        }
+
+        input[type=range]:focus::-ms-fill-lower {
+            background: #545454;
+        }
+
+        input[type=range]:focus::-ms-fill-upper {
+            background: #545454;
+        }
+
+
+
+
+        /* checkbox */
+        .cb-container {
+            display: block;
+            position: relative;
+            padding-left: 35px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            font-size: 22px;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .cb-container input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .checkmark {
+            position: absolute;
+            top: 0;
+            left: 0;
+            height: 25px;
+            width: 25px;
+            background-color: #eee;
+        }
+
+        .cb-container:hover input~.checkmark {
+            background-color: #ccc;
+        }
+
+        .cb-container input:checked~.checkmark {
+            background-color: #a8a8a8;
+        }
+
+        .checkmark:after {
+            content: "";
+            position: absolute;
+            display: none;
+        }
+
+        .cb-container input:checked~.checkmark:after {
+            display: block;
+        }
+
+        .cb-container .checkmark:after {
+            left: 9px;
+            top: 5px;
+            width: 5px;
+            height: 10px;
+            border: solid white;
+            border-width: 0 3px 3px 0;
+            -webkit-transform: rotate(45deg);
+            -ms-transform: rotate(45deg);
+            transform: rotate(45deg);
+        }
+
+
+
+        div#credits {
+            min-height: 800px;
+            color: #fff;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        a {
+            color: rgb(160, 160, 160);
+            font-size: 22px;
+        }
+
+        .nav {
+            display: block;
+            margin-top: 10%;
+            width: 90%;
+        }
+
+        .nav a {
+            float: right;
+            margin-left: 40px;
+        }
+
+        div#roadmap {
+            min-height: 600px;
+            color: #fff;
+            max-width: 500px;
+            margin: 0 auto;
+            font-size: 18px;
+        }
+
+        div#roadmap li {
+            margin: 10px 0;
+        }
+
+        @keyframes bgScroll {
+            0% {
+                background-position: 0px 0px
+            }
+
+            100% {
+                background-position: -512px 0px
+            }
+        }
+        
+    </style>
+</head>
+
+<body>
+    <div id="grid">
+        <div class="image">
+            <img id="image" src="data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==">
+        </div>
+        <div class="details">
+            <h2>Puzzle settings:</h2>
+            <div class="settings">
+                <div style="width: 65%; float: left">
+                    <input id="nPiecesSlider" type="range">
+                    <h3 style="text-align: center;"><span id="npieces"></span> pieces</h3>
+                </div>
+                <div style="width: 30%; margin-left: 5%; float: left">
+                    <label class="cb-container">Random rotations
+                        <input type="checkbox" id="rotate-checkbox">
+                        <span class="checkmark"></span>
+                    </label>
+                </div>
+            </div>
+            <button class="play" id="play-btn">
+                CONTINUE
+            </button>
+            <span style="width: 90%; margin-top: 15px; display: block; text-align: center;">*A VR headset and a
+                controller are required</span>
+        </div>
+        <div class="prev" id="prev-image">
+            <i class="arrow up"></i>
+        </div>
+        <div class="next" id="next-image">
+            <i class="arrow down"></i>
+        </div>
+        <div class="header">
+            <h1>Build a puzzle in VR</h1>
+            <span>Play it directly in your browser</span>
+        </div>
+        <div class="footer">
+            <div class="nav">
+                <a href="#credits">Credits</a>
+                <a href="#roadmap">Roadmap</a>
+            </div>
+        </div>
+    </div>
+    <div id="roadmap">
+        <h2 style="padding-top: 150px;">Roadmap:</h2>
+        <ul>
+            <li>Troubleshoot compatibility issues</li>
+            <li>Add more images</li>
+            <li>In-game menu, adjust the play area</li>
+            <li>More puzzle types (jigsaw, spherical, ...)</li>
+            <li>Improve performance in puzzles with many pieces</li>
+            <li>Multiplayer rooms, play with friends</li>
+            <li>Customizable environment and music</li>
+        </ul>
+    </div>
+    <div id="credits">
+        <h2 style="padding-top: 50px;">Credits:</h2>
+        <p>
+            Puzzle photos from <a href="https://unsplash.com" title="Unsplash">Unsplash</a> by:
+        </p><ul>
+            <li><a href="https://unsplash.com/photos/3MAmj1ZKSZA">Timon Klauser</a></li>
+            <li><a href="https://unsplash.com/photos/yVUQlyRlJSw">Valentin BEAUVAIS</a></li>
+            <li><a href="https://unsplash.com/photos/DD1fSz2HF1s">Carles Rabada</a></li>
+            <li><a href="https://unsplash.com/photos/LeG68PrXA6Y">Gradienta</a></li>
+        </ul>
+        <p></p>
+        <p>
+            Background skybox by <a href="https://avainx.wordpress.com/" title="Avionx">Avionx</a>
+        </p>
+        <p>
+            Sounds from <a href="https://freesound.org" title="Freesound">Freesound</a> by:
+        </p><ul>
+            <li><a href="https://freesound.org/people/Arctura/">Arctura</a></li>
+            <li><a href="https://freesound.org/people/Andrewkn/">Andrewkn</a></li>
+        </ul>
+        <p></p>
+        <p>
+            Powered by <a href="https://threejs.org/" title="ThreeJS">Three.js</a>
+        </p>
+    </div>
+<script type="text/javascript" src="menu.bundle.js"></script></body>
+
+</html>
