@@ -1,1 +1,1 @@
-# [Play now](https://vr-attic.github.io/puzzle)
+# [Play now](https://vrattic.github.io/webxr-jigsaw-puzzle/)
